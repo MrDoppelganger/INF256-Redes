@@ -8,7 +8,7 @@
 > **Integrantes:**
 > * Vicente Rodríguez Rogers | 21.303.222-4 | 202273503-1 
 > * Nicolás Muñoz | 21.270.184-K | 202273641-0 
-> * Diego Octavio Espinoza | 11.111.111-1 | 999999999-9
+> * Diego Octavio Espinoza | 21.221.834-0 | 202273576-7
 
 ---
 
