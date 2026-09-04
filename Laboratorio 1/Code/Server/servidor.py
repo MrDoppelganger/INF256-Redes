@@ -1,4 +1,19 @@
 import socket
+import datetime
+from datetime import datetime,timedelta
+
+def enusuarios(usuario,contra):
+    with open("usuarios.csv", "r") as archivo: 
+        for linea in archivo:
+            partes = linea.strip().split(',')
+            if usuario ==partes[0]:
+                if contra==partes[1]:
+                    return True
+            else:
+                pass
+        print("ERROR INVALID CREDENTIALS. \n")
+        return False
+                                
 
 def server():
     host = "127.0.0.1"
@@ -22,11 +37,33 @@ def server():
                 if comando == "LOGIN":
                     user=partes[1]
                     password=partes[2]
-                    print("llego con usuario " + user , password)
+
                     
-                    #token =
-                    #with open("sesiones.csv", "w") as archivo: 
-                     #   archivo.write(token +"," creacion+ "," + timestamp +"," + ultimo_heartbeat +"," estado)
+
+                    if enusuarios(user,password):
+                        #aqui creare las partes, strftime("%Y-%m-%d %H:%M:%S") esto es pa dejarlo como string leible
+
+                        formato="%Y-%m-%d %H:%M:%S"
+                        ahora = datetime.now()
+
+                        timestamp_creacion=ahora.strftime(formato)
+                        timestamp_ultimo_heartbeat=timestamp_creacion
+
+                        vence=(ahora + timedelta(minutes=10)).strftime(formato)
+                        texto = user + str(addr)
+                        token= str(abs(hash(texto)))
+                        estado="ACTIVO"
+                        puerto_cliente=str(addr[1])
+
+                        #print("llego con usuario " + user , password)
+                        with open("sesiones.csv", "a") as archivo: 
+                            archivo.write(f"{token},{user},{timestamp_creacion},{timestamp_ultimo_heartbeat},{estado}\n")
+                        print(f"Sesión creada para {user} con token {token}")
+                        conn.sendall(f"OK {token} {puerto_cliente}\n".encode('utf-8'))
+
+                    else:
+                        conn.sendall(f"ERROR INVALID CREDENTIALS\n".encode('utf-8'))
+                        continue
 
 
 
