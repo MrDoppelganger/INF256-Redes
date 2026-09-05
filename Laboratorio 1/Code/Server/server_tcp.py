@@ -1,6 +1,6 @@
 import socket
 import threading
-from storage import verificar_credenciales, crear_sesion, validar_token_y_obtener_usuario
+from storage import enusuarios, logeao, ensesionado
 
 # Diccionario global para guardar los sockets de los clientes logeados
 # Formato: { "token123": objeto_socket }
@@ -22,8 +22,8 @@ def manejar_cliente(conn, addr):
                     user = partes[1]
                     password = partes[2]
 
-                    if verificar_credenciales(user, password):
-                        token = crear_sesion(user)
+                    if enusuarios(user, password):
+                        token = logeao(user)
                         clientes_activos[token] = conn # Guardamos el socket
                         # Enviamos OK, el token, y el PUERTO UDP DEL SERVIDOR (9001)
                         conn.sendall(f"OK {token} 9001\n".encode('utf-8'))
@@ -35,7 +35,7 @@ def manejar_cliente(conn, addr):
                     token = partes[1]
                     mensaje = " ".join(partes[2:])
                     
-                    usuario = validar_token_y_obtener_usuario(token)
+                    usuario = ensesionado(token)
                     if usuario:
                         # Aquí deberías guardar el mensaje en historial.csv usando storage.py
                         # Y luego hacer el BROADCAST a los demás
