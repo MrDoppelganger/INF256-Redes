@@ -46,11 +46,12 @@ func IniciarChatTCP() {
 	// Si el login es exitoso, extraemos el token y disparamos las goroutines
 	if strings.HasPrefix(respServer, "OK") {
 		partes := strings.Split(strings.TrimSpace(respServer), " ")
-		if len(partes) >= 2 {
+		if len(partes) >= 3 {
 			token := partes[1]
+			puertoUDP := partes[2]
 
 			// 1. Lanzamos el envío de latidos UDP en segundo plano
-			go IniciarHeartbeatUDP(token)
+			go IniciarHeartbeatUDP(token, puertoUDP)
 
 			// 2. Lanzamos el receptor de mensajes TCP en segundo plano
 			go escucharServidor(conn)
