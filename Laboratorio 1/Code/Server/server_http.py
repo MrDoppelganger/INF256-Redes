@@ -1,35 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import csv
-from datetime import datetime
 import json
-
-PORT = 8080
-HOST = "127.0.0.1"
-
-
-def comprobar_existencia_username(a):
-    with open('usuarios.csv',newline= '',encoding='utf-8') as archivo:
-        lector = csv.reader(archivo)
-        for username in lector:
-            if username[0] == a:
-                return 1
-        return 0
-
-def añadir_usuario(user,pasword):
-    with open('usuarios.csv',mode='a', newline= '',encoding='utf-8') as archivo:
-        escritor = csv.writer(archivo)
-        escritor.writerow([user,pasword,datetime.now()])
-        
-def leer_historial():
-    historial_mensajes = []
-
-    with open("historial.csv", "r", newline="", encoding="utf-8") as archivo:
-        lector = csv.reader(archivo)
-
-        for fila in lector:
-            historial_mensajes.append(fila)
-
-    return historial_mensajes
+from storage import comprobar_existencia_username, añadir_usuario, leer_historial
 
 class ServidorRedes(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -71,9 +43,21 @@ class ServidorRedes(BaseHTTPRequestHandler):
                 self.send_response(400, "Bad request")
                 self.end_headers()
 
-        
-
-servidor = HTTPServer((HOST,PORT), ServidorRedes)
-print(f"Servidor ejecutandose en http://{HOST}:{PORT}")
-
-servidor.serve_forever()
+# -------------------Funcion----------------------
+#   innit_http:
+#        Se encarga de levantar las funcionalidades del HTTP
+#  ------------------Parametros-------------------
+#   host = "0.0.0.0": 
+#       Fijamos el host con el INADDR_ANY que le dice al
+#       socket que debera de escuchar en todas las interfaces
+#       de red disponible
+#   port = 8080:
+#       Establecemos que el puerto de comunicacion sera el 
+#       8080
+#  ------------------Return-----------------------
+#  Void: NONE
+#  -----------------------------------------------
+def innit_http(host = "0.0.0.0", port = 8080):
+    servidor = HTTPServer((host, port), ServidorRedes)
+    print(f"[HTTP] Servidor ejecutandose en http://{host}:{port}")
+    servidor.serve_forever()
