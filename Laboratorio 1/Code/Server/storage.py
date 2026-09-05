@@ -3,7 +3,8 @@ import csv
 import threading
 import time
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
+
 
 
 #----------------------------Variables generales---------------------------
@@ -162,3 +163,61 @@ def expiradorSesiones():
 
     #retornamos los tokens expirados
     return tokens_expirados
+
+#---------------------------------la ordinaries del nico--------------------------------------
+# -------------------Funcion----------------------
+#   enusuario:
+#       verififcamos si las credenciales (usuario y contraseña)
+#       estan en la bd y coinicden 
+#  ------------------Parametros-------------------
+#   usuario: 
+#       Es el username del usuario que queremos buscar
+#   password:
+#       Es la contraseña del usuario que queremos buscar
+#  ------------------Return-----------------------
+#  bool: True si las credenciales estan bien, False en caso contrario.
+#  -----------------------------------------------
+def enusuarios(usuario,contra):
+    #agarramos el candado
+    with candado_usuarios:
+        with open(RUTA_USUARIOS, "r") as archivo: 
+            for linea in archivo:
+                partes = linea.strip().split(',')
+                if usuario ==partes[0]:
+                    if contra==partes[1]:
+                        return True
+                else:
+                    pass
+            print("ERROR INVALID CREDENTIALS. \n")
+            return False
+
+
+def logeao(conn, addr, user):
+    #Usamos time.time() para facilitar la revision de sesiones expiradas
+    tiempo_actual = str(time.time())
+    #vence=(ahora + timedelta(minutes=10)).strftime(formato)       #No hace nada por el momento supongo
+
+    #generamos el token
+    texto = user + tiempo_actual 
+    token= str(abs(hash(texto)))
+
+    #tomamos el candado del csv sesiones
+    with candado_sesion:
+        #escribimos la nueva sesion dentro del csv
+        with open(RUTA_SESIONES, "a", newline="", encoding="utf-8") as archivo:
+            escritor = csv.writer(archivo)
+            #Formato:          token, user, t_creacion , t_ultimoHeartbeat, estado
+            escritor.writerow([token, user, tiempo_actual, tiempo_actual, "ACTIVO"])
+
+    #retornamos el token creado
+    return token
+
+def ensesionado(token_objetivo):
+    #tomamos el candado
+    with candado_sesion:
+        with open(RUTA_SESIONES, "r", encoding="utf-8") as archivo:
+            lector = csv.reader(archivo)
+            for fila in lector:
+                if len(fila) == 5 and fila[0] == token_objetivo and fila[4] == "ACTIVO":
+                    return fila[1] # Retorna el nombre de usuario
+    return None

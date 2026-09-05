@@ -8,7 +8,8 @@ func main(){
 		fmt.Println("\n--- MENU ---")
 		fmt.Println("1. Registrar usuario")
 		fmt.Println("2. Ver historial")
-		fmt.Println("3. Salir")
+		fmt.Println("3. Iniciar Chat (TCP)")
+        fmt.Println("4. Salir")
 		fmt.Print("Seleccione una opcion: ")
 		fmt.Scanln(&opcion)
 		if opcion == 1{
@@ -24,12 +25,11 @@ func main(){
 
 				ObtenerHistorial()
 
-		}else if opcion == 3 {
+		} else if opcion == 3 {
 
-				fmt.Println("Saliendo...")
-				break
+            	IniciarChatTCP()
 
-		}else if opcion == 3 {
+        } else if opcion == 4 {
 
 				fmt.Println("Saliendo...")
 				break
