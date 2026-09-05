@@ -8,10 +8,10 @@ if __name__ == "__main__":
     print("[Server] Arrancando sistema central...")
 
     #Creamos los hilos de cada funcionalidad
-    hilo_http = threading.Thread(target = innit_http, deamon = True)
-    hilo_tcp = threading.Thread(target = innit_tcp, deamon = True)
-    hilo_udp = threading.Thread(target = innit_udp, deamon = True)
-    hilo_watchdog = threading.Thread(target = innit_watchdog, deamon = True)
+    hilo_http = threading.Thread(target = innit_http, daemon= True)
+    hilo_tcp = threading.Thread(target = innit_tcp, daemon= True)
+    hilo_udp = threading.Thread(target = innit_udp, daemon= True)
+    hilo_watchdog = threading.Thread(target = innit_watchdog, daemon= True)
 
     #Corremos nuestros hilos
     hilo_http.start()

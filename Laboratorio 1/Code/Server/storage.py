@@ -48,9 +48,9 @@ def actualizarHeartbeat(token_objetivo):
                     fila[3] = tiempo_actual
                 sesiones_actualizadas.append(fila)
         #Actualizamos las sesiones
-        with open(RUTA_SESIONES, mode = 'w', encoding = 'utf-8') as f:
+        with open(RUTA_SESIONES, mode = 'w', encoding = 'utf-8', newline = '') as f:
             actualizador = csv.writer(f)
-            actualizador.writerow(sesiones_actualizadas)
+            actualizador.writerows(sesiones_actualizadas)
 
 # -------------------Funcion----------------------
 #   comprobar_existencia_username:
@@ -137,7 +137,7 @@ def expiradorSesiones():
             #revisamos todas las sesesiones de la bd
             for fila in lector:
                 #Comprobamos si es que cumple el formato y es una sesion activa
-                if len(fila) == 5 and fila[4] == "ACTIVA":
+                if len(fila) == 5 and fila[4] == "ACTIVO":
                     tiempo_creacion = float(fila[2])
                     tiempo_ultimo_hb = float(fila[3])
 
@@ -157,7 +157,7 @@ def expiradorSesiones():
 
                 sesiones_actualizadas.append(fila)
         #Actualizamos las sesiones
-        with open(RUTA_SESIONES, mode = 'w', encoding = 'utf-8') as f:
+        with open(RUTA_SESIONES, mode = 'w', encoding = 'utf-8', newline = '') as f:
             actualizador = csv.writer(f)
             actualizador.writerows(sesiones_actualizadas)
 
@@ -192,7 +192,7 @@ def enusuarios(usuario,contra):
             return False
 
 
-def logeao(conn, addr, user):
+def logeao(user):
     #Usamos time.time() para facilitar la revision de sesiones expiradas
     tiempo_actual = str(time.time())
     #vence=(ahora + timedelta(minutes=10)).strftime(formato)       #No hace nada por el momento supongo
@@ -212,12 +212,25 @@ def logeao(conn, addr, user):
     #retornamos el token creado
     return token
 
-def ensesionado(token_objetivo):
+
+def guardar_historial(usuario,mensaje):
+    tiempo_actual = str(time.time())
+    with candado_historial:
+        with open(RUTA_HISTORIAL, mode="a", newline="", encoding="utf-8") as archivo:
+            escritor = csv.writer(archivo)
+            # Escribe la fila con el formato: tiempo, usuario, mensaje
+            escritor.writerow([tiempo_actual, usuario, mensaje])
+
+
+def ensesionado(token_objetivo,mensaje):
     #tomamos el candado
     with candado_sesion:
         with open(RUTA_SESIONES, "r", encoding="utf-8") as archivo:
             lector = csv.reader(archivo)
             for fila in lector:
                 if len(fila) == 5 and fila[0] == token_objetivo and fila[4] == "ACTIVO":
+                    user=fila[1]
+                    msj=mensaje
+                    guardar_historial(user,msj)
                     return fila[1] # Retorna el nombre de usuario
     return None
