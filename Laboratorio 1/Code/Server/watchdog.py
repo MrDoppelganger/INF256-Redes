@@ -1,7 +1,7 @@
 #-------------------------------Liberia---------------------------
 import time
 from storage import expiradorSesiones
-
+from server_tcp import expulsarClienteTCP
 #-------------------------------Funciones--------------------------
 # -------------------Funcion----------------------
 #   innit_watchdog:
@@ -24,4 +24,4 @@ def innit_watchdog():
         #Mostramos todas las sesiones que han sido expiradas
         for token in expirados:
             print(f"[WATCHDOG] Sesión {token} REVOCADA.")
-            #NOTA: AQUI HAY QUE AGREGAR LA DESCONEXION DEL TCP.
+            expulsarClienteTCP(token)

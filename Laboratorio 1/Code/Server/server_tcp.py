@@ -40,15 +40,46 @@ def manejar_cliente(conn, addr):
                     
                     usuario = ensesionado(token,mensaje)
                     if usuario:
-                        # Aquí deberías guardar el mensaje en historial.csv usando storage.py
-                        # Y luego hacer el BROADCAST a los demás
                         conn.sendall("ACK\n".encode('utf-8'))
 
+                        #Tomamos el candado para ver a los clientes activos y hacer el broadcast
+                        with candado_clientes_activos:
+                            for token_destino, socket_destino in clientes_activos():
+                                #nos aseguramos de no mandarnos el mensaje a nosotros mismos
+                                if token_destino != token:
+                                    try:
+                                        socket_destino.sendall(f"INCOMING {usuario} {mensaje}\n".encode('utf-8'))
+                                    except Exception:
+                                        pass
                     else:
                         conn.sendall("ERROR INVALID TOKEN OR EXPIRED\n".encode('utf-8'))
             except Exception as e:
                 print(f"[TCP] Error con {addr}: {e}")
                 break
+
+# -------------------Funcion----------------------
+#   expulsarClienteTCP:
+#       Se encargara de expulsar del socker a las sesiones cerradas 
+#  ------------------Parametros-------------------
+#   token_objetivo:
+#       token objetivo para expulsar del socketr
+#  ------------------Return-----------------------
+#  None
+#  -----------------------------------------------
+def expulsarClienteTCP(token_objetivo):
+    #tomamos el candado
+    with candado_clientes_activos:
+        if token_objetivo in clientes_activos[token_objetivo]:
+            socket_objetivo = clientes_activos[token_objetivo]
+            #eliminamos dentro de un bloque try
+            try:
+                socket_objetivo.sendall("ERROR SESSION EXPIRED\n".encode('utf-8'))
+                socket_objetivo.close()
+            except Exception:
+                pass
+            
+            #eliminamos el token asesinado de nuestra lista
+            del clientes_activos[token_objetivo]
 
 def innit_tcp(host="0.0.0.0", port=9000):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
