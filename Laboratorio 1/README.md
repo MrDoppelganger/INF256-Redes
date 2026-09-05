@@ -52,7 +52,19 @@
 ```
     
 ## 🚀 Instrucciones de Ejecución
-*   
-
+**Previo:**
+*   Se requiere tener instalado python 3.1 y Go 1.2 o compatibles.
+*   Los archivos *.csv* pueden estar vacios al iniciar o con datos pero si o si deben existir
+    los 3.
+**Despliegue del Servidor:**
+*   Abrir una terminal posicionada en la carpeta *Code/Server*
+*   Ejecutar el comando ```python3 main.py```
+**Ejecucion del Cliente:**
+*   Abrir una terminal posicionada en la carpeta *Code/Client*
+*   Ejecutar el comando ```go run .```
+*   Interactuar con el menu.
 ## ⚠️ Consideraciones
-*   
+*   Se asume que el usuario simpre colocara inputs validos
+*   Se asume que durante el Loggin, solo sera necesario verificar el estado de *"Actividad" de
+    la sesion, el encargado de revisar y expirar este estado sera el watchdog
+
