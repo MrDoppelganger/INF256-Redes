@@ -87,7 +87,7 @@ def añadir_usuario(user,pasword):
         with open(RUTA_USUARIOS, mode = 'a', newline= '',encoding='utf-8') as archivo:
             escritor = csv.writer(archivo)
             escritor.writerow([user,pasword,datetime.now()])
-            
+
 # -------------------Funcion----------------------
 #   leer_historial:
 #       entrega el historial actual 
@@ -108,3 +108,57 @@ def leer_historial():
                 historial_mensajes.append(fila)
 
         return historial_mensajes
+    
+# -------------------Funcion----------------------
+#   expiradorSesiones:
+#       Funcion encargada de ir revisando si es que ha expirado una sesion
+#       debido a las 3 causales indicadas en el enunciado:
+#           -Tiempo de gracia alcanzado: si no se detecta ningun Heartbeat luego
+#               de 30 segundos desde su creacion.
+#           -Timeout por inactividad: si ya han pasado 60 segundos desde el ultimo
+#               Heartbeat.
+#           -Tiempo de sesion agotado: si ya pasaron 10 minutos de sesion
+#  ------------------Parametros-------------------
+# NONE
+#  ------------------Return-----------------------
+#  tokens_expirados: es una lista con todos los tokens que han expirado
+#  -----------------------------------------------
+def expiradorSesiones():
+    tiempo_actual = time.time()
+    sesiones_actualizadas = []
+    tokens_expirados = []
+
+    #Agarramos el candado de acceso a la bd de sesiones
+    with candado_sesion:
+        #leemos el estado de las sesiones
+        with open(RUTA_SESIONES, mode = 'r', encoding = 'utf-8') as f:
+            lector = csv.reader(f)
+            #revisamos todas las sesesiones de la bd
+            for fila in lector:
+                #Comprobamos si es que cumple el formato y es una sesion activa
+                if len(fila) == 5 and fila[4] == "ACTIVA":
+                    tiempo_creacion = float(fila[2])
+                    tiempo_ultimo_hb = float(fila[3])
+
+                    #Condiciones para matar la sesion
+                    #No ha habido Heartbeat despues de 30 segundos desde la creación
+                    gracia_expirada = (tiempo_creacion == tiempo_ultimo_hb) and (tiempo_actual - tiempo_creacion > 30)
+                    # Han pasado mas de 60 segundos desde el ultimo HEARTBEAT
+                    timeout = (tiempo_creacion != tiempo_ultimo_hb) and (tiempo_actual - tiempo_ultimo_hb > 60)
+                    # Sesion expirada por tiempo limite de 10 minutos
+                    sesion_expirada = (tiempo_actual - tiempo_creacion > 600)
+
+                    #si se cumple cualquiera de las condiciones, expiramos la sesion
+                    if gracia_expirada or timeout or sesion_expirada:
+                        fila[4] = "EXPIRADO"
+                        tokens_expirados.append(fila[0])
+                        #Nota: Aqui hay que avisarle al server_tcp que cierre el socket fisico
+
+                sesiones_actualizadas.append(fila)
+        #Actualizamos las sesiones
+        with open(RUTA_SESIONES, mode = 'w', encoding = 'utf-8') as f:
+            actualizador = csv.writer(f)
+            actualizador.writerows(sesiones_actualizadas)
+
+    #retornamos los tokens expirados
+    return tokens_expirados
