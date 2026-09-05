@@ -35,11 +35,12 @@ def manejar_cliente(conn, addr):
                     token = partes[1]
                     mensaje = " ".join(partes[2:])
                     
-                    usuario = ensesionado(token)
+                    usuario = ensesionado(token,mensaje)
                     if usuario:
                         # Aquí deberías guardar el mensaje en historial.csv usando storage.py
                         # Y luego hacer el BROADCAST a los demás
                         conn.sendall("ACK\n".encode('utf-8'))
+
                     else:
                         conn.sendall("ERROR INVALID TOKEN OR EXPIRED\n".encode('utf-8'))
             except Exception as e:
