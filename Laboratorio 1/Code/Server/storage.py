@@ -192,7 +192,7 @@ def enusuarios(usuario,contra):
             return False
 
 
-def logeao(conn, addr, user):
+def logeao(user):
     #Usamos time.time() para facilitar la revision de sesiones expiradas
     tiempo_actual = str(time.time())
     #vence=(ahora + timedelta(minutes=10)).strftime(formato)       #No hace nada por el momento supongo
