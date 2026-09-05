@@ -8,7 +8,7 @@ import (
 )
 
 
-func cliente(usuario string, contraseña string){
+func Cliente(usuario string, contraseña string){
 	port := "8080"
 	host := "127.0.0.1"
 	c, err := net.Dial("tcp", host+":"+port)
@@ -42,7 +42,7 @@ func cliente(usuario string, contraseña string){
 	}
 }
 
-func obtenerHistorial() {
+func ObtenerHistorial() {
 	host := "127.0.0.1"
 	port := "8080"
 
@@ -81,49 +81,3 @@ func obtenerHistorial() {
 	}
 }
 
-	
-	
-
-
-
-func main(){
-	for {
-		var opcion int
-		fmt.Println("\n--- MENU ---")
-		fmt.Println("1. Registrar usuario")
-		fmt.Println("2. Ver historial")
-		fmt.Println("3. Salir")
-		fmt.Print("Seleccione una opcion: ")
-		fmt.Scanln(&opcion)
-		if opcion == 1{
-			var usuario string
-			var contraseña string
-			fmt.Print("Ingresa tu usuario: ")
-			fmt.Scanln(&usuario)
-			fmt.Print("Ingresa tu contraseña: ")
-			fmt.Scanln(&contraseña)
-			cliente(usuario,contraseña)
-		
-		}else if opcion == 2 {
-
-				obtenerHistorial()
-
-		}else if opcion == 3 {
-
-				fmt.Println("Saliendo...")
-				break
-
-		}else if opcion == 3 {
-
-				fmt.Println("Saliendo...")
-				break
-
-		}else {
-
-			fmt.Println("Opcion invalida")
-		}
-
-	}
-		
-		
-}
