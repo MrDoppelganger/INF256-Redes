@@ -1,4 +1,4 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 import csv
 import json
 from storage import comprobar_existencia_username, añadir_usuario, leer_historial
@@ -58,6 +58,6 @@ class ServidorRedes(BaseHTTPRequestHandler):
 #  Void: NONE
 #  -----------------------------------------------
 def innit_http(host = "0.0.0.0", port = 8080):
-    servidor = HTTPServer((host, port), ServidorRedes)
+    servidor = ThreadingHTTPServer((host, port), ServidorRedes)
     print(f"[HTTP] Servidor ejecutandose en http://{host}:{port}")
     servidor.serve_forever()

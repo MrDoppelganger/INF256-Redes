@@ -67,7 +67,7 @@ def comprobar_existencia_username(a):
         with open(RUTA_USUARIOS, newline = '', encoding = 'utf-8') as archivo:
             lector = csv.reader(archivo)
             for username in lector:
-                if username[0] == a:
+                if username and username[0] == a:
                     return 1
             return 0
 
@@ -180,14 +180,12 @@ def expiradorSesiones():
 def enusuarios(usuario,contra):
     #agarramos el candado
     with candado_usuarios:
-        with open(RUTA_USUARIOS, "r") as archivo: 
-            for linea in archivo:
-                partes = linea.strip().split(',')
-                if usuario ==partes[0]:
-                    if contra==partes[1]:
-                        return True
-                else:
-                    pass
+        with open(RUTA_USUARIOS, "r", encoding= "utf-8") as archivo: 
+            lector = csv.reader(archivo)
+            for fila in lector:
+                if fila and len(fila) >= 2 and fila[0] == usuario and fila[1] == contra:
+                    return True
+                
             print("ERROR INVALID CREDENTIALS. \n")
             return False
 

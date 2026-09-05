@@ -6,9 +6,8 @@ import (
 	"time"
 )
 
-func IniciarHeartbeatUDP(token string) {
+func IniciarHeartbeatUDP(token string, port string) {
 	host := "127.0.0.1"
-	port := "9001" // Puerto UDP del servidor
 	conn, err := net.Dial("udp", host+":"+port)
 	if err != nil {
 		fmt.Println("[UDP] Error conectando:", err)

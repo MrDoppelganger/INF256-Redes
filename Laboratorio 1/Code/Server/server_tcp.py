@@ -4,6 +4,7 @@ from storage import enusuarios, logeao, ensesionado
 
 # Diccionario global para guardar los sockets de los clientes logeados
 # Formato: { "token123": objeto_socket }
+candado_clientes_activos = threading.Lock()
 clientes_activos = {}
 
 def manejar_cliente(conn, addr):
@@ -24,7 +25,9 @@ def manejar_cliente(conn, addr):
 
                     if enusuarios(user, password):
                         token = logeao(user)
-                        clientes_activos[token] = conn # Guardamos el socket
+                        #tomamos el candado
+                        with candado_clientes_activos:
+                            clientes_activos[token] = conn # Guardamos el socket
                         # Enviamos OK, el token, y el PUERTO UDP DEL SERVIDOR (9001)
                         conn.sendall(f"OK {token} 9001\n".encode('utf-8'))
                         print(f"[TCP] Login exitoso: {user}")
