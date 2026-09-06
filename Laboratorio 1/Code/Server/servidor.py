@@ -1,3 +1,9 @@
+#########################
+#########################
+#########################
+#########################
+#########################
+#########################archivo de pruebas y creacion de funciones que no se utilizo para la entrega final, se deja pal practico 
 import socket
 import datetime
 from datetime import datetime,timedelta

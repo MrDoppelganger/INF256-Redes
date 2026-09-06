@@ -65,6 +65,6 @@
 *   Interactuar con el menu.
 ## ⚠️ Consideraciones
 *   Se asume que el usuario simpre colocara inputs validos
-*   Se asume que durante el Loggin, solo sera necesario verificar el estado de *"Actividad" de
+*   Se asume que durante el Login, solo sera necesario verificar el estado de *"Actividad" de
     la sesion, el encargado de revisar y expirar este estado sera el watchdog
-
+*   Se debe de correr primero el server y luego los clientes
